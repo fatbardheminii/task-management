@@ -11,15 +11,20 @@ const MainSection = () => {
     const [projects, setProjects] = useState([]);
 
     return (
-        <main>
-            <InboxSection></InboxSection>
-            <ProjectsSection projects={projects}></ProjectsSection>
-            <AddProjectForm onAddProject={setProjects}></AddProjectForm>
-            <AddTaskSection></AddTaskSection>
-            <AddTaskForm onAddTask={setTasks}></AddTaskForm>            
-            <TasksDisplay tasks={tasks}></TasksDisplay>
-        </main>
-    )
+      <main>
+        <div className="left-side">
+          <InboxSection></InboxSection>
+          <ProjectsSection
+            projects={projects}
+            onAddProject={setProjects}
+          ></ProjectsSection>
+        </div>
+        <div className="right-side">
+          <AddTaskSection onAddTask={setTasks}></AddTaskSection>
+          <TasksDisplay tasks={tasks}></TasksDisplay>
+        </div>
+      </main>
+    );
 };
 
 export default MainSection;
