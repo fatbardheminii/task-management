@@ -1,9 +1,8 @@
-const ProjectCard = ({
-  projectName,
-}) => {
+const ProjectCard = ({ projectName, taskCount, onClick }) => {
   return (
-    <div className="task-card">
-      <h3>{projectName}</h3>
+    <div onClick={onClick}>
+      <div>{projectName}</div>
+      <span>{taskCount}</span>
     </div>
   );
 };

@@ -3,12 +3,21 @@ import AddProjectForm from "./AddProjectForm";
 import ProjectCard from "./ProjectCard";
 import { useState } from "react";
 
-const ProjectsSection = ({ projects, onAddProject }) => {
+const ProjectsSection = ({ projects, onAddProject, tasks, onSetFilter }) => {
     const [showProjectForm, setShowProjectForm] = useState(false);
 
     const handleToggle = () => {
         setShowProjectForm(!showProjectForm)
     }
+
+    const getTaskCount = (projectName) => {
+      return tasks.filter((task) => task.project === projectName).length;
+    };
+
+    const handleProjectClick = (projectName) => {
+      const projectTasks = tasks.filter((task) => task.project === projectName);
+      onSetFilter(projectTasks);
+    };
 
   return (
     <>
@@ -41,6 +50,8 @@ const ProjectsSection = ({ projects, onAddProject }) => {
             <ProjectCard
               key={project.id}
               projectName={project.projectName}
+              taskCount={getTaskCount(project.projectName)}
+              onClick={() => handleProjectClick(project.projectName)}
             ></ProjectCard>
           ))}
         </ul>
