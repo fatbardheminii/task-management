@@ -11,10 +11,17 @@ const MainSection = () => {
     const [importantTasks, setImportantTasks] = useState([]);
     const [projects, setProjects] = useState([]);
     const [filterTasks, setFilterTasks] = useState([]);
+    const [currentFilter, setCurrentFilter] = useState('All Tasks');
 
     useEffect(() => {
       setFilterTasks(tasks);
-    }, []);
+      setCurrentFilter('All Tasks');
+    }, [tasks]);
+
+    const handleSetFilter = (tasksArray, filterName) => {
+      setFilterTasks(tasksArray);
+      setCurrentFilter(filterName);
+    };
 
     return (
       <main>
@@ -24,13 +31,13 @@ const MainSection = () => {
             todayTasks={todayTasks}
             thisWeekTasks={thisWeekTasks}
             importantTasks={importantTasks}
-            onSetFilter={setFilterTasks}
+            onSetFilter={handleSetFilter}
           ></InboxSection>
           <ProjectsSection
             projects={projects}
             onAddProject={setProjects}
             tasks={tasks}
-            onSetFilter={setFilterTasks}
+            onSetFilter={handleSetFilter}
           ></ProjectsSection>
         </div>
         <div className="right-side">
@@ -44,7 +51,8 @@ const MainSection = () => {
           />
           <TasksDisplay
             filterTasks={filterTasks}
-            onSetFilter={setFilterTasks}
+            currentFilter={currentFilter}
+            onSetFilter={handleSetFilter}
             tasks={tasks}
             todayTasks={todayTasks}
             thisWeekTasks={thisWeekTasks}

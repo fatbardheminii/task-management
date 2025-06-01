@@ -1,11 +1,12 @@
 import TaskCard from "./TaskCard";
 
-const TasksDisplay = ({ filterTasks }) => {
+const TasksDisplay = ({ filterTasks, currentFilter }) => {
     
   return (
     <>
       <section className="add-tasks-sec">
         <h2>Tasks:</h2>
+        <h3>{currentFilter}</h3>
         <div className="tasks-list">
           {filterTasks.map((task) => (
             <TaskCard

@@ -16,7 +16,7 @@ const ProjectsSection = ({ projects, onAddProject, tasks, onSetFilter }) => {
 
     const handleProjectClick = (projectName) => {
       const projectTasks = tasks.filter((task) => task.project === projectName);
-      onSetFilter(projectTasks);
+      onSetFilter(projectTasks, projectName);
     };
 
   return (
@@ -44,7 +44,6 @@ const ProjectsSection = ({ projects, onAddProject, tasks, onSetFilter }) => {
             }}
           />
         )}
-        {/* <AddProjectForm onAddProject={onAddProject}></AddProjectForm> */}
         <ul className="project-sec-ul">
           {projects.map((project) => (
             <ProjectCard
