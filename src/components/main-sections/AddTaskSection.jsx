@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaPlusCircle, FaMinusCircle } from "react-icons/fa";
 import AddTaskForm from "./AddTaskForm";
 
-const AddTaskSection = ({ onAddTask }) => {
+const AddTaskSection = ({ onAddTask, onAddTodayTask, onAddThisWeekTask, onAddImportantTask, onAddProject, projects }) => {
   const [showForm, setShowForm] = useState(false);
 
   const handleToggle = () => setShowForm(!showForm);
@@ -30,6 +30,11 @@ const AddTaskSection = ({ onAddTask }) => {
               onAddTask(updateFunc);
               setShowForm(false);
             }}
+            onAddTodayTask={onAddTodayTask}
+            onAddWeekTask={onAddThisWeekTask}
+            onAddImportantTask={onAddImportantTask}
+            onAddProject={onAddProject}
+            projects={projects}
           />
         )}
       </section>
