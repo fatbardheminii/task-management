@@ -1,17 +1,17 @@
-import Header from './components/Header';
-import Footer from './components/Footer';
-import MainSection from './components/MainSection'
-import './App.css'
+import { TaskProvider } from "./contexts/TaskContext";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import MainSection from "./components/MainSection";
+import "./App.css";
 
 function App() {
-
   return (
-    <>
-      <Header></Header>
-      <MainSection></MainSection>
-      <Footer></Footer>
-    </>
-  )
+    <TaskProvider>
+      <Header />
+      <MainSection />
+      <Footer />
+    </TaskProvider>
+  );
 }
 
-export default App
+export default App;
