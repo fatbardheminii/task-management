@@ -1,61 +1,49 @@
+import { useState, useContext } from "react";
 import { FaPlusCircle, FaMinusCircle } from "react-icons/fa";
 import AddProjectForm from "./AddProjectForm";
 import ProjectCard from "./ProjectCard";
-import { useState } from "react";
+import { TaskContext } from "../../contexts/TaskContext";
 
-const ProjectsSection = ({ projects, onAddProject, tasks, onSetFilter }) => {
-    const [showProjectForm, setShowProjectForm] = useState(false);
+const ProjectsSection = ({ onSetFilter }) => {
+  const { state } = useContext(TaskContext);
+  const { projects, tasks } = state;
+  const [showProjectForm, setShowProjectForm] = useState(false);
 
-    const handleToggle = () => {
-        setShowProjectForm(!showProjectForm)
-    }
+  const handleToggle = () => {
+    setShowProjectForm(!showProjectForm);
+  };
 
-    const getTaskCount = (projectName) => {
-      return tasks.filter((task) => task.project === projectName).length;
-    };
+  const getTaskCount = (projectName) => {
+    return tasks.filter((task) => task.project === projectName).length;
+  };
 
-    const handleProjectClick = (projectName) => {
-      const projectTasks = tasks.filter((task) => task.project === projectName);
-      onSetFilter(projectTasks, projectName);
-    };
+  const handleProjectClick = (projectName) => {
+    const projectTasks = tasks.filter((task) => task.project === projectName);
+    onSetFilter(projectTasks, projectName);
+  };
 
   return (
-    <>
-      <section className="project-sec">
-        <h2>
-          Projects{" "}
-          {showProjectForm ? (
-            <FaMinusCircle
-              onClick={handleToggle}
-              className="plus-circle"
-            ></FaMinusCircle>
-          ) : (
-            <FaPlusCircle
-              onClick={handleToggle}
-              className="plus-circle"
-            ></FaPlusCircle>
-          )}
-        </h2>
-        {showProjectForm && (
-          <AddProjectForm
-            onAddProject={(updateFunc) => {
-              onAddProject(updateFunc); // update project list
-              setShowProjectForm(false); // hide the form after submit
-            }}
-          />
+    <section className="project-sec">
+      <h2>
+        Projects{" "}
+        {showProjectForm ? (
+          <FaMinusCircle onClick={handleToggle} className="plus-circle" />
+        ) : (
+          <FaPlusCircle onClick={handleToggle} className="plus-circle" />
         )}
-        <ul className="project-sec-ul">
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              projectName={project.projectName}
-              taskCount={getTaskCount(project.projectName)}
-              onClick={() => handleProjectClick(project.projectName)}
-            ></ProjectCard>
-          ))}
-        </ul>
-      </section>
-    </>
+      </h2>
+      {showProjectForm && <AddProjectForm />}
+      <ul className="project-sec-ul">
+        {projects.map((project) => (
+          <ProjectCard
+            key={project.id}
+            projectName={project.projectName}
+            taskCount={getTaskCount(project.projectName)}
+            onClick={() => handleProjectClick(project.projectName)}
+          />
+        ))}
+      </ul>
+    </section>
   );
 };
 

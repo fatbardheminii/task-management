@@ -1,43 +1,39 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { isToday, isThisWeek, parseISO } from "date-fns";
+import { TaskContext } from "../../contexts/TaskContext";
 
-// Format input while typing (e.g., 12062025 -> 12-06-2025)
-const formatDateInput = (value) => {
-  const digits = value.replace(/\D/g, ""); // Remove non-digit characters
-  if (digits.length >= 5) {
-    return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4, 8)}`;
-  } else if (digits.length >= 3) {
-    return `${digits.slice(0, 2)}-${digits.slice(2, 4)}`;
-  }
-  return digits;
-};
-
-// Validate date format and logical correctness
-const isValidDate = (dateString) => {
-  if (!dateString || dateString.length !== 10) return false;
-  const [day, month, year] = dateString.split("-").map(Number);
-  if (!day || !month || !year) return false;
-  if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900)
-    return false;
-
-  const date = new Date(year, month - 1, day);
-  return date.getDate() === day && date.getMonth() === month - 1;
-};
-
-const AddTaskForm = ({
-  onAddTask,
-  onAddTodayTask,
-  onAddWeekTask,
-  onAddImportantTask,
-  onAddProject,
-  projects
-}) => {
+const AddTaskForm = ({ setShowForm }) => {
+  const { dispatch, state } = useContext(TaskContext);
+  const { projects } = state;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [project, setProject] = useState("");
   const [status, setStatus] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [importance, setImportance] = useState("");
+
+  const formatDateInput = (value) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length >= 5) {
+      return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(
+        4,
+        8
+      )}`;
+    } else if (digits.length >= 3) {
+      return `${digits.slice(0, 2)}-${digits.slice(2, 4)}`;
+    }
+    return digits;
+  };
+
+  const isValidDate = (dateString) => {
+    if (!dateString || dateString.length !== 10) return false;
+    const [day, month, year] = dateString.split("-").map(Number);
+    if (!day || !month || !year) return false;
+    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900)
+      return false;
+    const date = new Date(year, month - 1, day);
+    return date.getDate() === day && date.getMonth() === month - 1;
+  };
 
   const handleDateChange = (e) => {
     const formatted = formatDateInput(e.target.value);
@@ -68,29 +64,26 @@ const AddTaskForm = ({
       importance,
     };
 
-    onAddTask((prev) => [...prev, newTask]);
+    dispatch({ type: "ADD_TASK", payload: newTask });
 
     const parsedDate = parseISO(isoDate);
-
     if (isToday(parsedDate)) {
-      onAddTodayTask((prev) => [...prev, newTask]);
+      dispatch({ type: "ADD_TODAY_TASK", payload: newTask });
     }
-
     if (isThisWeek(parsedDate, { weekStartsOn: 1 })) {
-      onAddWeekTask((prev) => [...prev, newTask]);
+      dispatch({ type: "ADD_WEEK_TASK", payload: newTask });
     }
-
     if (importance === "high") {
-      onAddImportantTask((prev) => [...prev, newTask]);
+      dispatch({ type: "ADD_IMPORTANT_TASK", payload: newTask });
     }
 
     const projectExists = projects.some((p) => p.projectName === project);
     if (!projectExists && project.trim()) {
       const newProject = {
-        id: Date.now() + Math.random(), // Ensure unique ID
+        id: Date.now() + Math.random(),
         projectName: project,
       };
-      onAddProject((prev) => [...prev, newProject]);
+      dispatch({ type: "ADD_PROJECT", payload: newProject });
     }
 
     setTitle("");
@@ -99,6 +92,7 @@ const AddTaskForm = ({
     setStatus("");
     setDueDate("");
     setImportance("");
+    setShowForm(false);
   };
 
   return (
@@ -112,7 +106,6 @@ const AddTaskForm = ({
         onChange={(e) => setTitle(e.target.value)}
         required
       />
-
       <label htmlFor="description">Description:</label>
       <input
         type="text"
@@ -122,7 +115,6 @@ const AddTaskForm = ({
         onChange={(e) => setDescription(e.target.value)}
         required
       />
-
       <label htmlFor="project">Project:</label>
       <input
         type="text"
@@ -132,7 +124,6 @@ const AddTaskForm = ({
         onChange={(e) => setProject(e.target.value)}
         required
       />
-
       <label htmlFor="status">Status:</label>
       <select
         name="status"
@@ -146,7 +137,6 @@ const AddTaskForm = ({
         <option value="inProgress">In Progress</option>
         <option value="finished">Finished</option>
       </select>
-
       <label htmlFor="due-date">Due Date:</label>
       <input
         type="text"
@@ -156,7 +146,6 @@ const AddTaskForm = ({
         onChange={handleDateChange}
         required
       />
-
       <label htmlFor="importance">Importance:</label>
       <select
         name="importance"
@@ -170,7 +159,6 @@ const AddTaskForm = ({
         <option value="medium">Medium</option>
         <option value="high">High</option>
       </select>
-
       <button type="submit">Add Task</button>
     </form>
   );
