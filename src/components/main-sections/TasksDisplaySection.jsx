@@ -1,29 +1,37 @@
-import { useContext } from "react";
-import TaskCard from "./TaskCard";
+import { useState, useContext } from "react";
 import { TaskContext } from "../../contexts/TaskContext";
+import AddTaskForm from "./AddTaskForm";
+import TaskCard from "./TaskCard";
 
 const TasksDisplay = () => {
   const { state } = useContext(TaskContext);
-  const { filterTasks, currentFilter } = state;
+  const { filterTasks } = state;
+  const [showForm, setShowForm] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState(null);
+
+  const handleEdit = (task) => {
+    if (showForm && taskToEdit && taskToEdit.id === task.id) {
+      setShowForm(false);
+      setTaskToEdit(null);
+    } else {
+      setTaskToEdit(task);
+      setShowForm(true);
+    }
+  };
 
   return (
-    <section className="add-tasks-sec">
-      <h2>Tasks:</h2>
-      <h3>
-        {currentFilter} <span>{filterTasks.length}</span>
-      </h3>
+    <section className="tasks-display">
+      {showForm && (
+        <AddTaskForm setShowForm={setShowForm} taskToEdit={taskToEdit} />
+      )}
       <div className="tasks-list">
-        {filterTasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            title={task.title}
-            description={task.description}
-            project={task.project}
-            status={task.status}
-            dueDate={task.dueDate}
-            importance={task.importance}
-          />
-        ))}
+        {filterTasks.length === 0 ? (
+          <p>No tasks available.</p>
+        ) : (
+          filterTasks.map((task) => (
+            <TaskCard key={task.id} task={task} onEdit={handleEdit} />
+          ))
+        )}
       </div>
     </section>
   );

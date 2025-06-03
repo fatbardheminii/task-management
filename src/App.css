@@ -7,30 +7,31 @@
 
 html, body {
     width: 100%;
-    height: 100%;
+    min-height: 100vh;
     font-family: Arial, sans-serif;
     font-size: 20px;
     line-height: 1.6;
     color: #333;
     background-color: #f4f4f4;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
-/* Root Container - Full Height */
 #root {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* Header */
 header {
     background: #2c3e50;
     color: white;
     padding: 1rem 2rem;
     text-align: center;
     flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 header h1 {
@@ -38,35 +39,41 @@ header h1 {
     font-weight: normal;
 }
 
-/* Main Content - Full remaining height */
 main {
     flex: 1;
     display: grid;
     grid-template-columns: 300px 1fr;
-    grid-template-rows: 1fr;
-    height: calc(100vh - 120px); /* Adjust based on header/footer height */
-    overflow: hidden;
+    grid-template-rows: auto;
 }
 
-/* Left Sidebar - Contains Inbox and Projects */
 .left-sidebar {
     display: flex;
     flex-direction: column;
     background: white;
     border-right: 1px solid #dee2e6;
-}
-
-/* Inbox Section - Top Left */
-.inbox-sec {
-    flex: 1;
-    padding: 1.5rem;
-    border-bottom: 1px solid #dee2e6;
     overflow-y: auto;
 }
 
-.inbox-sec h2 {
+.inbox-sec {
+    padding: 1.5rem;
+    border-bottom: 1rem solid #dee2e6;
+}
+
+.inbox-sec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
     margin-bottom: 1rem;
+}
+
+.inbox-sec-header h2 {
     color: #495057;
+    font-size: 1.2rem;
+}
+
+.inbox-sec-header svg {
+    color: #6c757d;
     font-size: 1.2rem;
 }
 
@@ -109,18 +116,27 @@ main {
     flex-shrink: 0;
 }
 
-/* Projects Section - Bottom Left */
 .project-sec {
-    flex: 1;
     padding: 1.5rem;
-    overflow-y: auto;
 }
 
-.project-sec h2 {
+.project-sec-header {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+    cursor: pointer;
+    margin-bottom: 0;
+}
+
+.project-sec-header h2 {
+    display: flex;
+    align-items: center;
     color: #495057;
+    font-size: 1.2rem;
+}
+
+.project-sec-header svg {
+    color: #6c757d;
     font-size: 1.2rem;
 }
 
@@ -132,6 +148,48 @@ main {
 
 .project-sec-ul {
     list-style: none;
+    margin-top: 1rem;
+}
+
+.project-sec-li {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    transition: background-color 0.3s;
+}
+
+.project-sec-li:hover {
+    background-color: #e9ecef;
+}
+
+.project-sec-li-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.project-sec-li p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.project-tasks-num {
+    background: #6c757d;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    border: 1px solid #495057;
+}
+
+.project-actions {
+    display: flex;
+    gap: 0.5rem;
 }
 
 .add-project-form {
@@ -181,19 +239,17 @@ main {
 }
 
 .plus-circle {
-  cursor: pointer;
+    cursor: pointer;
 }
 
-/* Right Side - Task Management */
 .right-content {
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
     background: white;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
-/* Add Tasks Section Header - Top Right */
 .add-tasks-sec {
     flex-shrink: 0;
     margin-bottom: 1.5rem;
@@ -212,10 +268,10 @@ main {
     color: #28a745;
 }
 
-/* Add Task Form */
 .add-task-form {
+    position: relative;
     background: #f8f9fa;
-    padding: 1.5rem;
+    padding: 2rem 1.5rem 1.5rem;
     border-radius: 6px;
     margin-bottom: 1.5rem;
     border: 1px solid #dee2e6;
@@ -233,7 +289,8 @@ main {
     font-size: 0.9rem;
 }
 
-.add-task-form input {
+.add-task-form input,
+.add-task-form select {
     width: 100%;
     padding: 0.6rem;
     margin-bottom: 0.8rem;
@@ -242,13 +299,14 @@ main {
     font-size: 0.9rem;
 }
 
-.add-task-form input:focus {
+.add-task-form input:focus,
+.add-task-form select:focus {
     outline: none;
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.add-task-form button {
+.add-task-form button[type="submit"] {
     grid-column: span 2;
     background: #28a745;
     color: white;
@@ -262,29 +320,41 @@ main {
     width: 200px;
 }
 
-.add-task-form button:hover {
+.add-task-form button[type="submit"]:hover {
     background: #218838;
 }
 
-/* Tasks Display Section */
-.tasks-display {
-    flex: 1;
-    overflow-y: auto;
+.close-form-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.3rem;
+    transition: color 0.3s;
 }
 
-.tasks-display h2 {
-    color: #495057;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
+.close-form-btn:hover {
+    color: #b02a37;
+}
+
+.tasks-display {
+    flex: 1;
 }
 
 .tasks-list {
     background: #f8f9fa;
     padding: 1rem;
     border-radius: 6px;
-    min-height: 200px;
     border: 2px dashed #dee2e6;
-    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(288px, 1fr));
+    gap: 1rem;
+    overflow-y: auto;
+    max-height: calc(100% - 6rem);
 }
 
 .tasks-list:empty::before {
@@ -294,9 +364,95 @@ main {
     display: block;
     text-align: center;
     padding: 2rem;
+    grid-column: 1 / -1;
 }
 
-/* Footer */
+.task-card {
+    width: 288px;
+    height: 288px;
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.task-card.low-importance {
+    border-left: 4px solid #28a745;
+    box-shadow: 0 2px 6px rgba(40, 167, 69, 0.1);
+}
+
+.task-card.medium-importance {
+    border-left: 4px solid #ffc107;
+    box-shadow: 0 2px 6px rgba(255, 193, 7, 0.1);
+}
+
+.task-card.high-importance {
+    border: 3px solid transparent;
+    border-image: linear-gradient(to right, #dc3545, #ff6b6b) 1;
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.2);
+    position: relative;
+}
+
+.task-card.high-importance::before {
+    content: "High Priority";
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #dc3545;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+}
+
+.task-card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.task-card p {
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+    color: #6c757d;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.task-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.edit-icon,
+.delete-icon {
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.edit-icon {
+    color: #007bff;
+}
+
+.edit-icon:hover {
+    color: #0056b3;
+}
+
+.delete-icon {
+    color: #dc3545;
+}
+
+.delete-icon:hover {
+    color: #b02a37;
+}
+
 footer {
     background: #343a40;
     color: white;
@@ -305,6 +461,7 @@ footer {
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
+    width: 100%;
 }
 
 footer p {
@@ -327,7 +484,6 @@ footer a:hover {
     margin-left: 1rem;
 }
 
-/* Scrollbar Styling */
 ::-webkit-scrollbar {
     width: 6px;
 }
@@ -345,41 +501,64 @@ footer a:hover {
     background: #a8a8a8;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     main {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: auto auto;
     }
-    
+
     .left-sidebar {
-        flex-direction: row;
-        height: auto;
+        flex-direction: column;
         border-right: none;
         border-bottom: 1px solid #dee2e6;
+        overflow-y: auto;
     }
-    
-    .inbox-sec,
-    .project-sec {
-        flex: 1;
-        border-bottom: none;
+
+    .inbox-sec .inbox-sec-ul,
+    .project-sec .project-sec-ul,
+    .project-sec .add-project-heading {
+        display: none;
     }
-    
-    .inbox-sec {
-        border-right: 1px solid #dee2e6;
+
+    .inbox-sec.show .inbox-sec-ul,
+    .project-sec.show .project-sec-ul,
+    .project-sec.show .add-project-heading {
+        display: block;
     }
-    
+
     .add-task-form {
         grid-template-columns: 1fr;
     }
-    
-    .add-task-form button {
+
+    .add-task-form button[type="submit"] {
         grid-column: span 1;
         width: 100%;
     }
+
+    .tasks-list {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        max-height: calc(100% - 8rem);
+    }
+
+    .task-card {
+        width: 240px;
+        height: 240px;
+    }
 }
 
-/* Utility Classes */
+@media (min-width: 769px) {
+    .inbox-sec .inbox-sec-ul,
+    .project-sec .project-sec-ul,
+    .project-sec .add-project-heading {
+        display: block;
+    }
+
+    .inbox-sec-header svg,
+    .project-sec-header svg {
+        display: none;
+    }
+}
+
 .hidden {
     display: none;
 }
