@@ -1,22 +1,34 @@
 import { useState, useContext } from "react";
 import { TaskContext } from "../../contexts/TaskContext";
 
-const AddProjectForm = () => {
+const AddProjectForm = ({ projectToEdit = null, setShowProjectForm }) => {
   const { dispatch } = useContext(TaskContext);
-  const [projectName, setProjectName] = useState("");
+  // Modified to initialize state with projectToEdit name if provided
+  const [projectName, setProjectName] = useState(
+    projectToEdit ? projectToEdit.projectName : ""
+  );
 
-  const HandleSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const newProject = {
-      id: Date.now(),
+    // Modified to reuse project ID if editing, otherwise generate new
+    const project = {
+      id: projectToEdit ? projectToEdit.id : Date.now(),
       projectName: projectName,
     };
-    dispatch({ type: "ADD_PROJECT", payload: newProject });
+    // Modified to dispatch EDIT_PROJECT if editing, ADD_PROJECT if creating
+    const actionType = projectToEdit ? "EDIT_PROJECT" : "ADD_PROJECT";
+    dispatch({
+      type: actionType,
+      payload: projectToEdit
+        ? { ...project, oldName: projectToEdit.projectName }
+        : project,
+    });
     setProjectName("");
+    setShowProjectForm(false);
   };
 
   return (
-    <form onSubmit={HandleSubmit} className="add-project-form">
+    <form onSubmit={handleSubmit} className="add-project-form">
       <label htmlFor="project-name">Project Name:</label>
       <input
         type="text"
@@ -24,8 +36,11 @@ const AddProjectForm = () => {
         placeholder="Add project name"
         value={projectName}
         onChange={(e) => setProjectName(e.target.value)}
+        required
       />
-      <button type="submit">Add Project</button>
+      <button type="submit">
+        {projectToEdit ? "Update Project" : "Add Project"}
+      </button>
     </form>
   );
 };
