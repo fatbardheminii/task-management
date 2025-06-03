@@ -1,24 +1,36 @@
-import { useState, useContext } from "react";
-import { isToday, isThisWeek, parseISO } from "date-fns";
+import { useState, useContext, useEffect } from "react";
+import { isToday, isThisWeek } from "date-fns";
+import { FaTimes } from "react-icons/fa";
 import { TaskContext } from "../../contexts/TaskContext";
+import { parseDDMMYYYY } from "../../utils/dateUtils";
 
-const AddTaskForm = ({ setShowForm }) => {
+const AddTaskForm = ({ setShowForm, taskToEdit = null }) => {
   const { dispatch, state } = useContext(TaskContext);
   const { projects } = state;
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [project, setProject] = useState("");
-  const [status, setStatus] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [importance, setImportance] = useState("");
+  const [title, setTitle] = useState(taskToEdit?.title || "");
+  const [description, setDescription] = useState(taskToEdit?.description || "");
+  const [project, setProject] = useState(taskToEdit?.project || "");
+  const [status, setStatus] = useState(taskToEdit?.status || "");
+  const [dueDate, setDueDate] = useState(taskToEdit?.dueDate || "");
+  const [importance, setImportance] = useState(taskToEdit?.importance || "");
+  const [dateError, setDateError] = useState("");
+
+  useEffect(() => {
+    if (taskToEdit) {
+      setTitle(taskToEdit.title || "");
+      setDescription(taskToEdit.description || "");
+      setProject(taskToEdit.project || "");
+      setStatus(taskToEdit.status || "");
+      setDueDate(taskToEdit.dueDate || "");
+      setImportance(taskToEdit.importance || "");
+      setDateError("");
+    }
+  }, [taskToEdit]);
 
   const formatDateInput = (value) => {
     const digits = value.replace(/\D/g, "");
     if (digits.length >= 5) {
-      return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(
-        4,
-        8
-      )}`;
+      return `${digits.slice(0, 2)}-${digits.slice(2, 4)}-${digits.slice(4, 8)}`;
     } else if (digits.length >= 3) {
       return `${digits.slice(0, 2)}-${digits.slice(2, 4)}`;
     }
@@ -26,77 +38,120 @@ const AddTaskForm = ({ setShowForm }) => {
   };
 
   const isValidDate = (dateString) => {
-    if (!dateString || dateString.length !== 10) return false;
-    const [day, month, year] = dateString.split("-").map(Number);
-    if (!day || !month || !year) return false;
-    if (day < 1 || day > 31 || month < 1 || month > 12 || year < 1900)
+    if (!dateString || dateString.length !== 10) {
       return false;
-    const date = new Date(year, month - 1, day);
-    return date.getDate() === day && date.getMonth() === month - 1;
+    }
+    const [day, month, year] = dateString.split("-").map(Number);
+    if (!day || !month || !year) {
+      return false;
+    }
+    if (
+      day < 1 ||
+      day > 31 ||
+      month < 1 ||
+      month > 12 ||
+      year <  1900) {
+      return false;
+    }
+    const date = parseDDMMYYYY(dateString);
+    return (
+      date &&
+      date instanceof Date &&
+      !isNaN(date)
+    );
   };
 
   const handleDateChange = (e) => {
     const formatted = formatDateInput(e.target.value);
     setDueDate(formatted);
+    setDateError(
+      isValidDate(formatted) || formatted.length < 10
+        ? ""
+        : "Invalid date (dd-mm-yyyy)"
+    );
   };
 
-  const convertToISODate = (ddmmyyyy) => {
-    const [day, month, year] = ddmmyyyy.split("-");
-    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-  };
-
-  const HandleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!isValidDate(dueDate)) {
-      alert("Please enter a valid date in dd-mm-yyyy format.");
-      return;
-    }
-
-    const isoDate = convertToISODate(dueDate);
-    const newTask = {
-      id: Date.now(),
-      title,
-      description,
-      project,
-      status,
-      dueDate: isoDate,
-      importance,
-    };
-
-    dispatch({ type: "ADD_TASK", payload: newTask });
-
-    const parsedDate = parseISO(isoDate);
-    if (isToday(parsedDate)) {
-      dispatch({ type: "ADD_TODAY_TASK", payload: newTask });
-    }
-    if (isThisWeek(parsedDate, { weekStartsOn: 1 })) {
-      dispatch({ type: "ADD_WEEK_TASK", payload: newTask });
-    }
-    if (importance === "high") {
-      dispatch({ type: "ADD_IMPORTANT_TASK", payload: newTask });
-    }
-
-    const projectExists = projects.some((p) => p.projectName === project);
-    if (!projectExists && project.trim()) {
-      const newProject = {
-        id: Date.now() + Math.random(),
-        projectName: project,
-      };
-      dispatch({ type: "ADD_PROJECT", payload: newProject });
-    }
-
+  const handleClose = () => {
     setTitle("");
     setDescription("");
     setProject("");
     setStatus("");
     setDueDate("");
     setImportance("");
+    setDateError("");
     setShowForm(false);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!isValidDate(dueDate)) {
+      setDateError("Please enter a valid date in dd-mm-yyyy format.");
+      return;
+    }
+
+    const task = {
+      id: taskToEdit ? taskToEdit.id : Date.now() + Math.random(),
+      title,
+      description,
+      project,
+      status,
+      dueDate,
+      importance,
+    };
+
+    const actionType = taskToEdit ? "EDIT_TASK" : "ADD_TASK";
+    dispatch({ type: actionType, payload: task });
+
+    if (!taskToEdit) {
+      const parsedDate = parseDDMMYYYY(dueDate);
+      if (isToday(parsedDate)) {
+        dispatch({
+          type: "ADD_TODAY_TASK",
+          payload: task
+        });
+      }
+      if (isThisWeek(parsedDate, { weekStartsOn: 1 })) {
+        dispatch({
+          type: "ADD_WEEK_TASK",
+          payload: task
+        });
+      }
+      if (importance === "high") {
+        dispatch({
+          type: "ADD_IMPORTANT_TASK",
+          payload: task
+        });
+      }
+
+      const projectExists = projects.some((p) => p.projectName === project);
+      if (!projectExists && project.trim()) {
+        const newProject = {
+          id: Date.now() + Math.random(),
+          projectName: project,
+        };
+        dispatch({
+          type: "ADD_PROJECT",
+          payload: newProject
+        });
+      }
+    }
+
+    handleClose();
+  };
+
   return (
-    <form onSubmit={HandleSubmit} className="add-task-form">
+    <form onSubmit={handleSubmit} className="add-task-form">
+      {taskToEdit && (
+        <button
+          type="button"
+          className="close-form-btn"
+          onClick={handleClose}
+          title="Close form"
+        >
+          <FaTimes />
+        </button>
+      )}
       <label htmlFor="title">Title:</label>
       <input
         type="text"
@@ -146,6 +201,14 @@ const AddTaskForm = ({ setShowForm }) => {
         onChange={handleDateChange}
         required
       />
+      {dateError && (
+        <p style={{
+          color: "red",
+          fontSize: "0.8rem"
+        }}>
+          {dateError}
+        </p>
+      )}
       <label htmlFor="importance">Importance:</label>
       <select
         name="importance"
@@ -159,7 +222,7 @@ const AddTaskForm = ({ setShowForm }) => {
         <option value="medium">Medium</option>
         <option value="high">High</option>
       </select>
-      <button type="submit">Add Task</button>
+      <button type="submit">{taskToEdit ? "Update Task" : "Add Task"}</button>
     </form>
   );
 };
