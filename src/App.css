@@ -242,6 +242,10 @@ main {
     cursor: pointer;
 }
 
+.right-side {
+    padding: 1rem;
+}
+
 .right-content {
     display: flex;
     flex-direction: column;
@@ -376,18 +380,16 @@ main {
 }
 
 .task-card {
-    width: 288px;
-    height: 288px;
-    background: white;
-    padding: 1rem;
+    background: #fff;
     border-radius: 8px;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    overflow: hidden;
+    justify-content: space-between; 
+    min-height: 200px; 
+    overflow: auto; 
 }
 
 .task-card.low-importance {
@@ -527,8 +529,9 @@ main {
 
 .task-card-actions {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 footer {
@@ -619,8 +622,15 @@ footer a:hover {
     }
 
     .task-card {
-        width: 240px;
-        height: 240px;
+        min-height: 250px; 
+        padding: 10px; 
+        width: 100%; 
+    }
+    .task-card-actions {
+        margin-top: 5px; 
+    }
+    .task-description-wrapper {
+        flex-grow: 1; 
     }
 }
 
