@@ -1,18 +1,19 @@
 import { useState, useContext, useEffect, useRef } from "react";
 import {
   FaPlusCircle,
+  FaMinusCircle,
   FaEdit,
   FaTrash,
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
 import { TaskContext } from "../../contexts/TaskContext";
+import AddProjectForm from "./AddProjectForm";
 
-const ProjectsSection = () => {
+const ProjectsSection = ({ onSetFilter }) => {
   const { state, dispatch } = useContext(TaskContext);
   const { projects, tasks } = state;
-  const [showForm, setShowForm] = useState(false);
-  const [projectName, setProjectName] = useState("");
+  const [showProjectForm, setShowProjectForm] = useState(false);
   const [editProject, setEditProject] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const sectionRef = useRef(null);
@@ -31,38 +32,14 @@ const ProjectsSection = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleAddProject = (e) => {
-    e.preventDefault();
-    if (!projectName.trim()) return;
-
-    if (editProject) {
-      dispatch({
-        type: "EDIT_PROJECT",
-        payload: {
-          id: editProject.id,
-          projectName,
-          oldName: editProject.projectName,
-        },
-      });
-    } else {
-      dispatch({
-        type: "ADD_PROJECT",
-        payload: {
-          id: Date.now() + Math.random(),
-          projectName,
-        },
-      });
-    }
-
-    setProjectName("");
-    setShowForm(false);
+  const handleToggleForm = () => {
+    setShowProjectForm(!showProjectForm);
     setEditProject(null);
   };
 
   const handleEdit = (project) => {
     setEditProject(project);
-    setProjectName(project.projectName);
-    setShowForm(true);
+    setShowProjectForm(true);
   };
 
   const handleDelete = (project) => {
@@ -78,6 +55,7 @@ const ProjectsSection = () => {
       type: "SET_FILTER",
       payload: { tasks: filteredTasks, filterName: projectName },
     });
+    onSetFilter(filteredTasks, projectName);
   };
 
   const getTaskCount = (projectName) => {
@@ -122,27 +100,19 @@ const ProjectsSection = () => {
           </li>
         ))}
       </ul>
-      {showForm && (
-        <form className="add-project-form" onSubmit={handleAddProject}>
-          <label htmlFor="project-name">Project Name:</label>
-          <input
-            type="text"
-            id="project-name"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-            required
-          />
-          <button type="submit">
-            {editProject ? "Update Project" : "Add Project"}
-          </button>
-        </form>
+      {showProjectForm && (
+        <AddProjectForm
+          projectToEdit={editProject}
+          setShowProjectForm={setShowProjectForm}
+        />
       )}
       <h2 className="add-project-heading">
         Add Project{" "}
-        <FaPlusCircle
-          className="plus-circle"
-          onClick={() => setShowForm(true)}
-        />
+        {showProjectForm ? (
+          <FaMinusCircle className="plus-circle" onClick={handleToggleForm} />
+        ) : (
+          <FaPlusCircle className="plus-circle" onClick={handleToggleForm} />
+        )}
       </h2>
     </section>
   );

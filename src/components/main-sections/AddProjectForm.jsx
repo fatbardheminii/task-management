@@ -2,20 +2,37 @@ import { useState, useContext } from "react";
 import { TaskContext } from "../../contexts/TaskContext";
 
 const AddProjectForm = ({ projectToEdit = null, setShowProjectForm }) => {
-  const { dispatch } = useContext(TaskContext);
-  // Modified to initialize state with projectToEdit name if provided
+  const { dispatch, state } = useContext(TaskContext);
+  const { projects } = state;
   const [projectName, setProjectName] = useState(
     projectToEdit ? projectToEdit.projectName : ""
   );
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Modified to reuse project ID if editing, otherwise generate new
+    const trimmedName = projectName.trim();
+    if (!trimmedName) {
+      setError("Project name cannot be empty.");
+      return;
+    }
+
+    // Check for duplicate project names (case-insensitive)
+    const isDuplicate = projects.some(
+      (p) =>
+        p.projectName.toLowerCase() === trimmedName.toLowerCase() &&
+        (!projectToEdit || p.id !== projectToEdit.id)
+    );
+    if (isDuplicate) {
+      setError("A project with this name already exists.");
+      return;
+    }
+
     const project = {
       id: projectToEdit ? projectToEdit.id : Date.now(),
-      projectName: projectName,
+      projectName: trimmedName,
     };
-    // Modified to dispatch EDIT_PROJECT if editing, ADD_PROJECT if creating
+
     const actionType = projectToEdit ? "EDIT_PROJECT" : "ADD_PROJECT";
     dispatch({
       type: actionType,
@@ -23,7 +40,9 @@ const AddProjectForm = ({ projectToEdit = null, setShowProjectForm }) => {
         ? { ...project, oldName: projectToEdit.projectName }
         : project,
     });
+
     setProjectName("");
+    setError("");
     setShowProjectForm(false);
   };
 
@@ -33,11 +52,16 @@ const AddProjectForm = ({ projectToEdit = null, setShowProjectForm }) => {
       <input
         type="text"
         name="project-name"
+        id="project-name"
         placeholder="Add project name"
         value={projectName}
-        onChange={(e) => setProjectName(e.target.value)}
+        onChange={(e) => {
+          setProjectName(e.target.value);
+          setError("");
+        }}
         required
       />
+      {error && <p style={{ color: "red", fontSize: "0.8rem" }}>{error}</p>}
       <button type="submit">
         {projectToEdit ? "Update Project" : "Add Project"}
       </button>

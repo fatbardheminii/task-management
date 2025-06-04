@@ -84,6 +84,9 @@ const taskReducer = (state, action) => {
       };
     }
     case "DELETE_TASK": {
+      const deletedTask = state.tasks.find(
+        (task) => task.id === action.payload
+      );
       const filteredTasks = state.tasks.filter(
         (task) => task.id !== action.payload
       );
@@ -96,14 +99,29 @@ const taskReducer = (state, action) => {
       const filteredImportantTasks = state.importantTasks.filter(
         (task) => task.id !== action.payload
       );
+      // Check if the project has no remaining tasks
+      let updatedProjects = state.projects;
+      if (deletedTask && deletedTask.project) {
+        const tasksInProject = filteredTasks.filter(
+          (task) => task.project === deletedTask.project
+        );
+        if (tasksInProject.length === 0) {
+          updatedProjects = state.projects.filter(
+            (project) => project.projectName !== deletedTask.project
+          );
+        }
+      }
       return {
         ...state,
         tasks: filteredTasks,
         todayTasks: filteredTodayTasks,
         thisWeekTasks: filteredWeekTasks,
         importantTasks: filteredImportantTasks,
+        projects: updatedProjects,
         filterTasks:
-          state.currentFilter === "All Tasks"
+          state.currentFilter === deletedTask?.project
+            ? []
+            : state.currentFilter === "All Tasks"
             ? filteredTasks
             : state.filterTasks,
       };
@@ -136,14 +154,13 @@ const taskReducer = (state, action) => {
       const remainingTasks = state.tasks.filter(
         (task) => task.project !== action.payload.projectName
       );
-      // Fixed syntax errors: corrected spread operator and closed parentheses
       return {
-        ...state, // Properly spread state
+        ...state,
         projects: remainingProjects,
         tasks: remainingTasks,
         todayTasks: state.todayTasks.filter(
           (task) => task.project !== action.payload.projectName
-        ), // Added closing parenthesis
+        ),
         thisWeekTasks: state.thisWeekTasks.filter(
           (task) => task.project !== action.payload.projectName
         ),
