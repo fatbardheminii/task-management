@@ -1,5 +1,5 @@
 import { useState, useContext, useRef, useEffect } from "react";
-import { FaEdit, FaTrash, FaTimes, FaEllipsisH } from "react-icons/fa";
+import { FaEdit, FaTrash, FaTimes, FaEye } from "react-icons/fa";
 import { TaskContext } from "../../contexts/TaskContext";
 
 const TaskCard = ({ task, onEdit }) => {
@@ -18,8 +18,8 @@ const TaskCard = ({ task, onEdit }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Debug click on ellipsis icon
-  const handleEllipsisClick = () => {
+  // Debug click on eye icon
+  const handleEyeClick = () => {
     setShowDescriptionModal(true);
   };
 
@@ -34,9 +34,9 @@ const TaskCard = ({ task, onEdit }) => {
       <div className="task-description-wrapper">
         <p className="task-description">{task.description}</p>
         {task.description.length > 30 && (
-          <FaEllipsisH
+          <FaEye
             className="description-more"
-            onClick={handleEllipsisClick}
+            onClick={handleEyeClick}
             title="View full description"
           />
         )}

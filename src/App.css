@@ -447,7 +447,7 @@ main {
 .description-more {
     cursor: pointer !important;
     color: #007bff;
-    font-size: 0.8rem;
+    font-size: 1rem;
     transition: color 0.3s;
 }
 

@@ -157,6 +157,7 @@ const AddTaskForm = ({ setShowForm, taskToEdit = null }) => {
         type="text"
         id="title"
         name="title"
+        placeholder="Title name"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
@@ -166,6 +167,7 @@ const AddTaskForm = ({ setShowForm, taskToEdit = null }) => {
         type="text"
         id="description"
         name="description"
+        placeholder="Description"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         required
@@ -175,6 +177,7 @@ const AddTaskForm = ({ setShowForm, taskToEdit = null }) => {
         type="text"
         name="project"
         id="project"
+        placeholder="Project name"
         value={project}
         onChange={(e) => setProject(e.target.value)}
         required
@@ -196,16 +199,18 @@ const AddTaskForm = ({ setShowForm, taskToEdit = null }) => {
       <input
         type="text"
         name="due-date"
-        placeholder="dd-mm-yyyy"
+        placeholder="DD-MM-YYYY"
         value={dueDate}
         onChange={handleDateChange}
         required
       />
       {dateError && (
-        <p style={{
-          color: "red",
-          fontSize: "0.8rem"
-        }}>
+        <p
+          style={{
+            color: "red",
+            fontSize: "0.8rem",
+          }}
+        >
           {dateError}
         </p>
       )}
