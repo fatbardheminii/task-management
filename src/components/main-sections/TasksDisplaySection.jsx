@@ -5,7 +5,7 @@ import TaskCard from "./TaskCard";
 
 const TasksDisplay = () => {
   const { state } = useContext(TaskContext);
-  const { filterTasks } = state;
+  const { filterTasks, currentFilter } = state;
   const [showForm, setShowForm] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState(null);
 
@@ -21,6 +21,7 @@ const TasksDisplay = () => {
 
   return (
     <section className="tasks-display">
+      <h2 className="tasks-display-header">{currentFilter}</h2>
       {showForm && (
         <AddTaskForm setShowForm={setShowForm} taskToEdit={taskToEdit} />
       )}

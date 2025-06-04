@@ -345,6 +345,14 @@ main {
     flex: 1;
 }
 
+.tasks-display-header {
+    font-size: 1.5rem;
+    color: #495057;
+    margin-bottom: 1rem;
+    text-align: left;
+    font-weight: bold;
+}
+
 .tasks-list {
     background: #f8f9fa;
     padding: 1rem;
@@ -420,25 +428,86 @@ main {
     font-size: 0.9rem;
     margin-bottom: 0.3rem;
     color: #6c757d;
+}
+
+.task-description-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+}
+
+.task-description {
+    flex: 1;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.task-card-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
+.description-more {
+    cursor: pointer !important;
+    color: #007bff;
+    font-size: 0.8rem;
+    transition: color 0.3s;
 }
 
-.edit-icon,
-.delete-icon {
-    font-size: 1rem;
+.description-more:hover {
+    color: #0056b3;
+}
+
+.description-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.description-modal-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.description-modal-content p {
+    font-size: 0.9rem;
+    color: #495057;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word; /* Ensure long words wrap */
+}
+
+.description-modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 0.75rem;
     cursor: pointer;
+    padding: 0.3rem;
     transition: color 0.3s;
+}
+
+.description-modal-close:hover {
+    color: #b02a37;
 }
 
 .edit-icon {
     color: #007bff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s;
 }
 
 .edit-icon:hover {
@@ -447,10 +516,19 @@ main {
 
 .delete-icon {
     color: #dc3545;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s;
 }
 
 .delete-icon:hover {
     color: #b02a37;
+}
+
+.task-card-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 footer {
