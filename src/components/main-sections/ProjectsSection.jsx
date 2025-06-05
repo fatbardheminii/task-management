@@ -2,13 +2,12 @@ import { useState, useContext, useEffect, useRef } from "react";
 import {
   FaPlusCircle,
   FaMinusCircle,
-  FaEdit,
-  FaTrash,
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
 import { TaskContext } from "../../contexts/TaskContext";
 import AddProjectForm from "./AddProjectForm";
+import ProjectCard from "./ProjectCard";
 
 const ProjectsSection = ({ onSetFilter }) => {
   const { state, dispatch } = useContext(TaskContext);
@@ -68,38 +67,24 @@ const ProjectsSection = ({ onSetFilter }) => {
         <h2>Projects</h2>
         {isOpen ? <FaChevronUp /> : <FaChevronDown />}
       </div>
-      <ul className="project-sec-ul">
+      <div className="project-sec-ul">
         {projects.map((project) => (
-          <li
+          <ProjectCard
             key={project.id}
-            className="project-sec-li"
+            project={project}
+            taskCount={getTaskCount(project.projectName)}
             onClick={() => handleFilter(project.projectName)}
-          >
-            <div className="project-sec-li-header">
-              <p>{project.projectName}</p>
-              <span className="project-tasks-num">
-                {getTaskCount(project.projectName)}
-              </span>
-            </div>
-            <div className="project-actions">
-              <FaEdit
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEdit(project);
-                }}
-                className="edit-icon"
-              />
-              <FaTrash
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(project);
-                }}
-                className="delete-icon"
-              />
-            </div>
-          </li>
+            onEdit={(e) => {
+              e.stopPropagation();
+              handleEdit(project);
+            }}
+            onDelete={(e) => {
+              e.stopPropagation();
+              handleDelete(project);
+            }}
+          />
         ))}
-      </ul>
+      </div>
       {showProjectForm && (
         <AddProjectForm
           projectToEdit={editProject}

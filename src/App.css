@@ -151,7 +151,7 @@ main {
     margin-top: 1rem;
 }
 
-.project-sec-li {
+.project-card {
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -160,25 +160,26 @@ main {
     border-radius: 8px;
     border: 1px solid #dee2e6;
     transition: background-color 0.3s;
+    cursor: pointer;
 }
 
-.project-sec-li:hover {
+.project-card:hover {
     background-color: #e9ecef;
 }
 
-.project-sec-li-header {
+.project-card > div:first-child {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 0.5rem;
 }
 
-.project-sec-li p {
-    margin: 0;
+.project-card > div:first-child > div {
     font-size: 0.9rem;
+    color: #495057;
 }
 
-.project-tasks-num {
+.project-card > div:first-child > span {
     background: #6c757d;
     color: white;
     padding: 2px 8px;
@@ -187,9 +188,31 @@ main {
     border: 1px solid #495057;
 }
 
-.project-actions {
+.project-card > div:last-child {
     display: flex;
     gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.project-card button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.project-card button:hover {
+    color: #0056b3;
+}
+
+.project-card button:last-child {
+    color: #dc3545;
+}
+
+.project-card button:last-child:hover {
+    color: #b02a37;
 }
 
 .add-project-form {
