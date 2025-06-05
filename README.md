@@ -1,5 +1,7 @@
 # Task Management Application
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/d50dd2a2-882e-40a6-b6dd-27e3e6dcb914/deploy-status)](https://taskmanagement-project.netlify.app/)
+
 A modern, responsive web application built with React for managing tasks and projects. The application allows users to create, edit, delete, and filter tasks by various criteria, such as due date, importance, and associated projects. It features a clean, intuitive user interface with a sidebar for navigation and a grid-based task display.
 
 ---
@@ -24,6 +26,7 @@ Live Demo: [Task Management Project](https://taskmanagement-project.netlify.app/
     - [Hooks](#hooks)
   - [Project Structure](#project-structure)
   - [Installation](#installation)
+  - [Documentation](#documentation)
 
 ---
 
@@ -121,3 +124,9 @@ Live Demo: [Task Management Project](https://taskmanagement-project.netlify.app/
   ```
 
   Open your browser and navigate to http://localhost:5173 (or the port Vite assigns) to see the app in action.
+
+  ---
+
+  ## Documentation
+
+  - For detailed information on the project’s architecture, components, state management, and extension ideas, see the technical documentation in the docs/ folder.
